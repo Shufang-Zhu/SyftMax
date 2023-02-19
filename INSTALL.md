@@ -64,10 +64,10 @@ Follow the instructions to complete the installation of lydia.
 2. Run example:
 
     ---- Synthesize one single strategy ----
-        ```./Syftmax -f ../../example/env.ltlf -p ../../example/test.part```
+        Agn first: ```./Syftmax -f ../../example/env.ltlf -p ../../example/test.part```
 
     ---- Synthesize the maximally permissive strategy ----
-        ```./Syftmax -f ../../example/env.ltlf -p ../../example/test.part -m```
+        Agn first: ```./Syftmax -f ../../example/env.ltlf -p ../../example/test.part -m```
    
 
 
