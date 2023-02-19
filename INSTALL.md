@@ -25,12 +25,6 @@
     sudo apt-get install flex bison
 
 
-==== Install MONA ====
-
-0.4 Mona can be found at:
-
-    https://github.com/cs-au-dk/MONA
-
 
 ==== Install SPOT ====
 
@@ -69,6 +63,11 @@ Follow the instructions to complete the installation of lydia.
 
 2. Run example:
 
-   ```./Syftmax -f ../../example/env.ltlf -p ../../example/test.part -e -m```
+    ---- Synthesize one single strategy ----
+        ```./Syftmax -f ../../example/env.ltlf -p ../../example/test.part```
+
+    ---- Synthesize the maximally permissive strategy ----
+        ```./Syftmax -f ../../example/env.ltlf -p ../../example/test.part -m```
+   
 
 
