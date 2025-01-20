@@ -16,9 +16,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 find_package(cudd REQUIRED)
 find_package(mona REQUIRED)
-find_package(spot REQUIRED)
 
 set(LYDIA_DIR ${PROJECT_SOURCE_DIR}/submodules/lydia)
+set(WITH_SYFT OFF)
 add_subdirectory(${LYDIA_DIR})
 set(LYDIA_LIBRARIES ${LYDIA_DIR})
 
