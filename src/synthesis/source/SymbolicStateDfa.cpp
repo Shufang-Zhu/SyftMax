@@ -117,6 +117,68 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit(
   return symbolic_dfa;
 }
 
+
+SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const ExplicitStateDfa &explicit_dfa) {
+  std::shared_ptr<VarMgr> var_mgr = explicit_dfa.var_mgr();
+
+  int state_count = explicit_dfa.state_count();
+  auto count_and_id = create_state_variables(var_mgr,
+               state_count);
+  std::size_t bit_count = count_and_id.first;
+  std::size_t automaton_id = count_and_id.second;
+
+  // testing
+  state_count = 3;
+  bit_count = 2;
+
+  std::vector<std::vector<CUDD::BDD>> state_metrics(state_count);
+  std::vector<std::vector<int>> state_connections(state_count);
+
+  std::vector<CUDD::ADD> transition_function = explicit_dfa.transition_function();
+
+  for (std::size_t i = 0; i < state_metrics.size(); ++i) {
+    std::vector<CUDD::BDD> state_metric(state_count);
+    std::vector<int> state_connection(state_count);
+    for (std::size_t j = 0; j < state_metrics.size(); ++j) {
+      CUDD::BDD transition = transition_function[j].BddIthBit(j);
+      state_metric[j] = transition;
+      if (transition == var_mgr->cudd_mgr()->bddZero()) {
+        state_connection[j] = 0;
+      } else {
+        state_connection[j] = 1;
+      }
+    }
+    state_metrics[i] = state_metric;
+    state_connections[i] = state_connection;
+  }
+
+  // testing
+  state_connections[0] = std::vector<int>({1, 1, 0});
+  state_connections[1] = std::vector<int>({1, 0, 1});
+  state_connections[2] = std::vector<int>({1, 0, 1});
+
+  std::vector<std::vector<int>> weights(state_count);
+  for (std::size_t i = 0; i < state_count; ++i) {
+    for (std::size_t j = 0; j < state_count; ++j) {
+      int sum = 0;
+      for (std::size_t k = 0; k < state_count; ++k) {
+        sum = sum + state_metrics[i][k] * state_metrics[j][k];
+      }
+      weights[i][j] = sum * bit_count;
+    }
+  }
+
+  std::vector<int> weights_sum(state_count);
+  for (std::size_t i = 0; i < state_count; ++i) {
+    int sum = 0;
+    for (std::size_t j = 0; j < state_count; ++j) {
+      sum = sum + weights[i][j];
+    }
+  }
+}
+
+
+
 std::shared_ptr<VarMgr> SymbolicStateDfa::var_mgr() const {
   return var_mgr_;
 }

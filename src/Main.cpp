@@ -58,6 +58,10 @@ int main(int argc, char ** argv) {
     Syft::SymbolicStateDfa symbolic_dfa = Syft::SymbolicStateDfa::from_explicit(
             std::move(explicit_dfa));
 
+    // test
+    // Syft::SymbolicStateDfa symbolic_dfa_test = Syft::SymbolicStateDfa::from_explicit_optimal_encoding(
+    //         std::move(explicit_dfa));
+
     auto aut_time = aut_time_stopwatch.stop();
     std::cout << "DFA construction time: "
               << aut_time.count() << " ms" << std::endl;

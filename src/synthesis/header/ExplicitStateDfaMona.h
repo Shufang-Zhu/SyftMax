@@ -44,7 +44,7 @@ namespace Syft {
             
         }
 
-        // rewrite this function, since nb_vairiables_ in mona_dfa is private
+        // rewrite this function, since nb_variables_ in mona_dfa is private
         int get_nb_variables() {
             return this->names.size();
         }
