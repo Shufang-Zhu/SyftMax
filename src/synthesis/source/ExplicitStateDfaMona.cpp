@@ -1,24 +1,16 @@
 #include "ExplicitStateDfaMona.h"
 
-#include "spotparser.h"
 #include <iostream>
 #include <istream>
-#include <queue>
 #include <set>
-#include <bits/stdc++.h>
-#include <tuple>
-#include <unordered_map>
 #include <lydia/mona_ext/mona_ext_base.hpp>
 #include <lydia/dfa/mona_dfa.hpp>
-#include <lydia/parser/ldlf/driver.cpp>
 #include <lydia/parser/ltlf/driver.cpp>
 #include <lydia/to_dfa/core.hpp>
 #include <lydia/to_dfa/strategies/compositional/base.hpp>
 #include <lydia/utils/print.hpp>
 
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/algorithm/string.hpp>
+#include "String_utilities.h"
 
 #include "cudd.h"
 

@@ -2,7 +2,7 @@
 
 #include <cstring>
 #include <stdexcept>
-#include <boost/algorithm/string.hpp>
+#include "String_utilities.h"
 
 namespace Syft {
 
