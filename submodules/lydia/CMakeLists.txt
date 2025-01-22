@@ -95,12 +95,25 @@ find_package (Threads REQUIRED)
 find_package(CUDD REQUIRED)
 find_package(MONA REQUIRED)
 #find_package(Graphviz REQUIRED)
+set(BISON_EXECUTABLE "/opt/homebrew/opt/bison/bin/bison" CACHE FILEPATH "Path to Bison executable")
+set(BISON_INCLUDE_DIRS "/opt/homebrew/opt/bison/include" CACHE PATH "Path to Bison includes")
+set(BISON_LIBRARIES "/opt/homebrew/opt/bison/lib" CACHE FILEPATH "Path to Bison library")
+
 find_package(BISON 3.0 REQUIRED)
+include_directories(${BISON_INCLUDE_DIRS})
+link_directories(${BISON_LIBRARIES})
+
+
+set(FLEX_EXECUTABLE "/opt/homebrew/opt/flex/bin/flex" CACHE FILEPATH "Path to Flex executable")
+set(FLEX_INCLUDE_DIR "/opt/homebrew/opt/flex/include" CACHE PATH "Path to Flex includes")
+set(FL_LIBRARY "/opt/homebrew/opt/flex/lib/libfl.a" CACHE FILEPATH "Path to Flex library")
 find_package(FLEX 2.6 REQUIRED)
+include_directories(${FLEX_INCLUDE_DIR})
+link_directories(${FL_LIBRARY})
 
 add_subdirectory (third_party EXCLUDE_FROM_ALL)
 add_subdirectory (lib)
-add_subdirectory (app)
+#add_subdirectory (app)
 #add_subdirectory (benchmark)
 
 #enable_testing ()

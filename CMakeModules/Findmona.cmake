@@ -33,7 +33,7 @@ endif()
 
 # Search for mona_mem
 find_path(MONA_MEM_INCLUDE_DIRS NAMES mem.h HINTS ${MONA_INCLUDE_PATH})
-find_library(MONA_MEM_LIBRARIES NAMES monamem HINTS ${MONA_LIBRARY_PATH})
+find_library(MONA_MEM_LIBRARIES NAMES libmonamem.a HINTS ${MONA_LIBRARY_PATH})
 
 include(FindPackageHandleStandardArgs)
 
@@ -43,7 +43,7 @@ mark_as_advanced(MONA_ROOT MONA_MEM_LIBRARIES MONA_MEM_INCLUDE_DIRS)
 
 # Search for mona_bdd
 find_path(MONA_BDD_INCLUDE_DIRS NAMES bdd.h HINTS ${MONA_INCLUDE_PATH})
-find_library(MONA_BDD_LIBRARIES NAMES monabdd HINTS ${MONA_LIBRARY_PATH})
+find_library(MONA_BDD_LIBRARIES NAMES libmonabdd.a HINTS ${MONA_LIBRARY_PATH})
 
 include(FindPackageHandleStandardArgs)
 
@@ -53,7 +53,7 @@ mark_as_advanced(MONA_ROOT MONA_BDD_LIBRARIES MONA_BDD_INCLUDE_DIRS)
 
 # Search for mona_dfa
 find_path(MONA_DFA_INCLUDE_DIRS NAMES dfa.h HINTS ${MONA_INCLUDE_PATH})
-find_library(MONA_DFA_LIBRARIES NAMES monadfa HINTS ${MONA_LIBRARY_PATH})
+find_library(MONA_DFA_LIBRARIES NAMES libmonadfa.a HINTS ${MONA_LIBRARY_PATH})
 
 include(FindPackageHandleStandardArgs)
 

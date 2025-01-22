@@ -17,7 +17,7 @@
  */
 
 #include <cstdio>
-#include <graphviz/gvc.h>
+// #include <graphviz/gvc.h>
 #include <lydia/dfa/dfa.hpp>
 #include <lydia/utils/misc.hpp>
 #include <lydia/utils/print.hpp>
@@ -27,9 +27,9 @@
 
 namespace whitemech::lydia {
 
-void dfa_to_graphviz(const abstract_dfa& automaton,
-                     const std::string& output_filename,
-                     const std::string& format = "svg");
+// void dfa_to_graphviz(const abstract_dfa& automaton,
+//                      const std::string& output_filename,
+//                      const std::string& format = "svg");
 
 void dfa_to_bdds(const dfa& automaton, const std::string& directory = "./");
 

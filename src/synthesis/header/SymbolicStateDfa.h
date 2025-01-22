@@ -3,6 +3,9 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <string>
 
 #include <cuddObj.hh>
 
@@ -43,6 +46,12 @@ namespace Syft {
             const std::vector<CUDD::ADD> &transition_function);
 
        static std::vector<int> weights_for_optimal_encoding(std::vector<std::vector<int>> state_connections, int bit_count);
+
+       static std::unordered_map<int, std::string> states_to_binary_optimal_encoding(std::vector<std::pair<int, int>> state_weights, int bit_count);
+
+       static std::vector<std::string> get_encodings_of_successors(int current_state, const std::unordered_set<std::string>& used_encodings, int bit_count);
+
+       static std::string get_encoding_of_new_state(const std::unordered_set<std::string>& used_encodings, int bit_count);
 
     public:
         /**

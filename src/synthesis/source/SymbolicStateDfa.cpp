@@ -1,4 +1,7 @@
 #include "SymbolicStateDfa.h"
+#include <algorithm>
+
+#include <bitset>
 
 namespace Syft {
 
@@ -154,11 +157,43 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const Explicit
   }
 
   std::vector<int> weights = weights_for_optimal_encoding(state_connections, bit_count);
-  //TODO from here
 
+  // Pair each state (index) with its weight
+  std::vector<std::pair<int, int>> state_weights;
+  for (int i = 0; i < state_count; ++i) {
+    state_weights.emplace_back(i, weights[i]);
+  }
+
+  // Sort the pairs by weight in descending order
+  std::sort(state_weights.begin(), state_weights.end(),
+            [](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+                return a.second > b.second; // Compare weights
+            });
+
+  std::cout << state_count << std::endl;
+  //TODO
+  std::unordered_map<int, std::string> state_encodings = xx
 
 
 }
+
+
+std::string SymbolicStateDfa::get_encoding(int current_state, const std::unordered_set<std::string>& usedEncodings, int bitLength) {
+  while (true) {
+    // Convert currentIndex to binary string
+    std::string encoding = xxx;
+
+    if (usedEncodings.find(encoding) == usedEncodings.end()) {
+      return encoding;
+    }
+  }
+}
+
+std::unordered_map<int, std::string> SymbolicStateDfa::states_to_binary_optimal_encoding(std::vector<std::pair<int, int> > state_weights, int bit_count) {
+   //TODO
+
+}
+
 
 
 std::vector<int> SymbolicStateDfa::weights_for_optimal_encoding(std::vector<std::vector<int>> state_connections, int bit_count) {
