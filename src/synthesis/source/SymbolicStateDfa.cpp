@@ -140,7 +140,8 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const Explicit
     std::vector<CUDD::BDD> state_metric(state_count);
     std::vector<int> state_connection(state_count);
     for (std::size_t j = 0; j < state_metrics.size(); ++j) {
-      CUDD::BDD transition = transition_function[j].BddIthBit(j);
+      // CUDD::BDD transition = transition_function[j].BddIthBit(j);
+      CUDD::BDD transition = var_mgr->cudd_mgr()->bddZero();
       state_metric[j] = transition;
       if (transition == var_mgr->cudd_mgr()->bddZero()) {
         state_connection[j] = 0;
@@ -152,19 +153,33 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const Explicit
     state_connections[i] = state_connection;
   }
 
+  std::vector<int> weights = weights_for_optimal_encoding(state_connections, bit_count);
+  //TODO from here
+
+
+
+}
+
+
+std::vector<int> SymbolicStateDfa::weights_for_optimal_encoding(std::vector<std::vector<int>> state_connections, int bit_count) {
+  int state_count = state_connections.size();
   // testing
   state_connections[0] = std::vector<int>({1, 1, 0});
   state_connections[1] = std::vector<int>({1, 0, 1});
   state_connections[2] = std::vector<int>({1, 0, 1});
 
-  std::vector<std::vector<int>> weights(state_count);
+  std::vector<std::vector<int>> weights_individual(state_count);
   for (std::size_t i = 0; i < state_count; ++i) {
+    weights_individual[i].resize(state_count);
     for (std::size_t j = 0; j < state_count; ++j) {
+      if (i == j) {
+        continue;
+      }
       int sum = 0;
       for (std::size_t k = 0; k < state_count; ++k) {
-        sum = sum + state_metrics[i][k] * state_metrics[j][k];
+        sum = sum + state_connections[i][k] * state_connections[j][k];
       }
-      weights[i][j] = sum * bit_count;
+      weights_individual[i][j] = sum * bit_count;
     }
   }
 
@@ -172,10 +187,17 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const Explicit
   for (std::size_t i = 0; i < state_count; ++i) {
     int sum = 0;
     for (std::size_t j = 0; j < state_count; ++j) {
-      sum = sum + weights[i][j];
+      if (i == j) {
+        continue;
+      }
+      sum = sum + weights_individual[i][j];
+      weights_sum[i] = sum;
     }
   }
+
+  return weights_sum;
 }
+
 
 
 

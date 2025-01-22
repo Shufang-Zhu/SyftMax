@@ -42,6 +42,8 @@ namespace Syft {
             std::size_t automaton_id,
             const std::vector<CUDD::ADD> &transition_function);
 
+       static std::vector<int> weights_for_optimal_encoding(std::vector<std::vector<int>> state_connections, int bit_count);
+
     public:
         /**
          * \brief Converts an explicit DFA to a symbolic representation.

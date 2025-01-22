@@ -19,6 +19,8 @@ int main(int argc, char ** argv) {
 
     std::string formula_file, partition_file;
 
+    std::cout << "should stop before here!\n";
+
     app.add_option("-f,--formula-file", formula_file, "Specification file")->
                     required() -> check(CLI::ExistingFile);
 
@@ -59,8 +61,8 @@ int main(int argc, char ** argv) {
             std::move(explicit_dfa));
 
     // test
-    // Syft::SymbolicStateDfa symbolic_dfa_test = Syft::SymbolicStateDfa::from_explicit_optimal_encoding(
-    //         std::move(explicit_dfa));
+    Syft::SymbolicStateDfa symbolic_dfa_test = Syft::SymbolicStateDfa::from_explicit_optimal_encoding(
+            std::move(explicit_dfa));
 
     auto aut_time = aut_time_stopwatch.stop();
     std::cout << "DFA construction time: "
