@@ -45,13 +45,28 @@ namespace Syft {
             std::size_t automaton_id,
             const std::vector<CUDD::ADD> &transition_function);
 
+        static CUDD::BDD state_to_bdd_with_encoding(const std::shared_ptr<VarMgr> &mgr,
+                                   std::size_t automaton_id,
+                                   std::unordered_map<int, std::string> state_encodings,
+                                   std::size_t state);
+
+     static CUDD::BDD state_set_to_bdd_with_encoding(
+         const std::shared_ptr<VarMgr> &mgr,
+         std::size_t automaton_id,
+         std::unordered_map<int, std::string> state_encodings,
+         const std::vector<size_t> &states);
+
        static std::vector<int> weights_for_optimal_encoding(std::vector<std::vector<int>> state_connections, int bit_count);
 
-       static std::unordered_map<int, std::string> states_to_binary_optimal_encoding(std::vector<std::pair<int, int>> state_weights, int bit_count);
-
-       static std::vector<std::string> get_encodings_of_successors(int current_state, const std::unordered_set<std::string>& used_encodings, int bit_count);
+       static std::vector<std::string> get_encodings_of_successors(std::string base_encoding, int n, const std::unordered_set<std::string>& used_encodings);
 
        static std::string get_encoding_of_new_state(const std::unordered_set<std::string>& used_encodings, int bit_count);
+
+       static std::unordered_map<int, std::string> optimal_encoding(std::vector<std::vector<int>>& state_connections, int bit_count);
+
+       static int hammingDistance(const std::string& a, const std::string& b);
+
+       static std::vector<int> binary_string_to_vector(const std::string& binary_string);
 
     public:
         /**

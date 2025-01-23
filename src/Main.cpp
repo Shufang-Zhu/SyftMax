@@ -19,8 +19,6 @@ int main(int argc, char ** argv) {
 
     std::string formula_file, partition_file;
 
-    std::cout << "should stop before here!\n";
-
     app.add_option("-f,--formula-file", formula_file, "Specification file")->
                     required() -> check(CLI::ExistingFile);
 
@@ -32,6 +30,9 @@ int main(int argc, char ** argv) {
 
     bool maxset = false;
     app.add_flag("-m,--maxset", maxset, "Maxset flag (Default: false)");
+
+    bool optimal_encoding = false;
+    app.add_flag("-o,--optimal-encoding", optimal_encoding, "Optimal encoding flag (Default: false)");
 
 
     CLI11_PARSE(app, argc, argv);
@@ -57,12 +58,12 @@ int main(int argc, char ** argv) {
     Syft::ExplicitStateDfaMona explicit_dfa_mona = Syft::ExplicitStateDfaMona::dfa_of_formula(f);
     Syft::ExplicitStateDfa explicit_dfa =  Syft::ExplicitStateDfa::from_dfa_mona(var_mgr, explicit_dfa_mona);
 
-    Syft::SymbolicStateDfa symbolic_dfa = Syft::SymbolicStateDfa::from_explicit(
-            std::move(explicit_dfa));
+    explicit_dfa_mona.dfa_print();
 
-    // test
-    Syft::SymbolicStateDfa symbolic_dfa_test = Syft::SymbolicStateDfa::from_explicit_optimal_encoding(
-            std::move(explicit_dfa));
+    Syft::SymbolicStateDfa symbolic_dfa =
+    (optimal_encoding)
+        ? Syft::SymbolicStateDfa::from_explicit_optimal_encoding(std::move(explicit_dfa))
+        : Syft::SymbolicStateDfa::from_explicit(std::move(explicit_dfa));
 
     auto aut_time = aut_time_stopwatch.stop();
     std::cout << "DFA construction time: "
