@@ -315,5 +315,6 @@ void VarMgr::dump_dot(const std::vector<CUDD::ADD>& adds,
 std::size_t VarMgr::automaton_num() const {
   return state_variables_.size();
 }
+
   
 }

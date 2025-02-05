@@ -181,6 +181,10 @@ namespace Syft {
 
         static std::vector<int> state_to_binary(std::size_t state,
                                                 std::size_t bit_count);
+
+        std::size_t  bdd_nodes_num () const;
+        std::size_t  bdd_nodes_num_final_states () const;
+        std::size_t  bdd_nodes_num_transitions () const;
     };
 }
 

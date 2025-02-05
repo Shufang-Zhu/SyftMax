@@ -158,16 +158,16 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const Explicit
     state_connections[i] = state_connection;
   }
 
-  std::cout << "state_connections done\n";
+  // std::cout << "state_connections done\n";
   // state_connections[0] = {1, 1, 0};
   // state_connections[1] = {1, 0, 1};
   // state_connections[2] = {1, 0, 1};
   std::unordered_map<int, std::string> state_encodings = optimal_encoding(state_connections, bit_count);
 
-  std::cout << "optimal encoding constructed\n";
-  for (auto it : state_encodings) {
-    std::cout << it.first << " " << it.second << std::endl;
-  }
+  // std::cout << "optimal encoding constructed\n";
+  // for (auto it : state_encodings) {
+  //   std::cout << it.first << " " << it.second << std::endl;
+  // }
 
   // build transition function
   std::vector<CUDD::BDD> transition_function;
@@ -257,10 +257,10 @@ std::unordered_map<int, std::string> SymbolicStateDfa::optimal_encoding(std::vec
                 return a.second > b.second; // Compare weights
             });
 
-  for (auto it = state_weights.begin(); it != state_weights.end(); ++it) {
-    std::cout << it->first << " " << it->second << std::endl;
-  }
-  std::cout << "states sorted by weights" << std::endl;
+  // for (auto it = state_weights.begin(); it != state_weights.end(); ++it) {
+  //   std::cout << it->first << " " << it->second << std::endl;
+  // }
+  // std::cout << "states sorted by weights" << std::endl;
 
   std::unordered_map<int, std::string> state_encodings;
   std::unordered_set<int> encoded_states;
@@ -501,6 +501,23 @@ SymbolicStateDfa SymbolicStateDfa::product(const std::vector<SymbolicStateDfa>& 
 
     return product_automaton;
 }
+
+  std::size_t SymbolicStateDfa::bdd_nodes_num_transitions() const {
+    return var_mgr()->cudd_mgr()->nodeCount(transition_function_);
+  }
+
+  std::size_t SymbolicStateDfa::bdd_nodes_num_final_states() const {
+    std::vector<CUDD::BDD> bdd_vec;
+    bdd_vec.push_back(final_states_);
+    return var_mgr()->cudd_mgr()->nodeCount(bdd_vec);
+  }
+
+  std::size_t SymbolicStateDfa::bdd_nodes_num() const {
+    std::vector<CUDD::BDD> bdd_vec = transition_function_;
+    bdd_vec.push_back(final_states_);
+    return var_mgr()->cudd_mgr()->nodeCount(bdd_vec);
+  }
+
 
 }
 

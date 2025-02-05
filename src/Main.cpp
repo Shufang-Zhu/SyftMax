@@ -58,7 +58,7 @@ int main(int argc, char ** argv) {
     Syft::ExplicitStateDfaMona explicit_dfa_mona = Syft::ExplicitStateDfaMona::dfa_of_formula(f);
     Syft::ExplicitStateDfa explicit_dfa =  Syft::ExplicitStateDfa::from_dfa_mona(var_mgr, explicit_dfa_mona);
 
-    explicit_dfa_mona.dfa_print();
+    // explicit_dfa_mona.dfa_print();
 
     Syft::SymbolicStateDfa symbolic_dfa =
     (optimal_encoding)
@@ -68,6 +68,14 @@ int main(int argc, char ** argv) {
     auto aut_time = aut_time_stopwatch.stop();
     std::cout << "DFA construction time: "
               << aut_time.count() << " ms" << std::endl;
+
+    std::cout << "Number of BDD nodes: "
+          << symbolic_dfa.bdd_nodes_num() << std::endl;
+    std::cout << "Number of BDD nodes in transitions: "
+          << symbolic_dfa.bdd_nodes_num_transitions() << std::endl;
+    std::cout << "Number of BDD nodes in final states: "
+          << symbolic_dfa.bdd_nodes_num_final_states() << std::endl;
+
 
     Syft::Stopwatch nondef_strategy_time_stopwatch; // stopwatch for strategy_generator construction
     nondef_strategy_time_stopwatch.start();

@@ -11,10 +11,14 @@ namespace Syft {
         std::vector<std::string> tokens;
         size_t start = 0, end = 0;
         while ((end = str.find(delimiter, start)) != std::string::npos) {
-            tokens.push_back(str.substr(start, end - start));
+            if (end != start) {
+                tokens.push_back(str.substr(start, end - start));
+            }
             start = end + delimiter.length();
         }
-        tokens.push_back(str.substr(start));
+        if (start < str.size()) {
+            tokens.push_back(str.substr(start));
+        }
         return tokens;
     }
 
