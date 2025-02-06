@@ -76,9 +76,18 @@ int main(int argc, char ** argv) {
     std::cout << "Number of BDD nodes in final states: "
           << symbolic_dfa.bdd_nodes_num_final_states() << std::endl;
 
+    // symbolic_dfa.dump_dot("dfa-o.dot");
+    // for (auto i = 0; i < symbolic_dfa.initial_state().size(); ++i) {
+    //     std::cout << symbolic_dfa.initial_state()[i] << " ";
+    // }
+    // std::cout << "Final states: " << symbolic_dfa.final_states() << std::endl;
+
 
     Syft::Stopwatch nondef_strategy_time_stopwatch; // stopwatch for strategy_generator construction
     nondef_strategy_time_stopwatch.start();
+
+    Syft::Stopwatch syn_time_stopwatch; // stopwatch for strategy_generator construction
+    syn_time_stopwatch.start();
 
     var_mgr->partition_variables(partition.input_variables,
                                  partition.output_variables);
@@ -131,7 +140,10 @@ int main(int argc, char ** argv) {
     else{
         std::cout << "The problem is Unrealizable" << std::endl;
     }
+    auto synthesis_time = syn_time_stopwatch.stop();
 
+    std::cout << "Synthesis time: "
+          << synthesis_time.count() << " ms" << std::endl;
   auto total_time = total_time_stopwatch.stop();
 
   std::cout << "Total time: "

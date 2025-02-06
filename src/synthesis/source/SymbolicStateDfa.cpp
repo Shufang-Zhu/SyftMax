@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include <bitset>
+#include <CLI/TypeTools.hpp>
 
 namespace Syft {
 
@@ -146,6 +147,7 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const Explicit
     for (std::size_t j = 0; j < state_metrics.size(); ++j) {
       CUDD::BDD transition = transition_function_add[i].BddInterval(j, j);
       // CUDD::BDD transition = var_mgr->cudd_mgr()->bddZero();
+      // var_mgr->dump_dot(transition.Add(), std::to_string(i)+"_"+std::to_string(j)+".dot");
       state_metric[j] = transition;
       if (transition == var_mgr->cudd_mgr()->bddZero()) {
         state_connection[j] = 0;
@@ -181,11 +183,17 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const Explicit
 
     CUDD::BDD transition = var_mgr->cudd_mgr()->bddZero();
     for (int j = 0; j < states_with_bit_i.size(); j++) {
-      for (int k = 0; k < predecessors_vec[j].size(); k++) {
-        int state = predecessors_vec[j][k];
-        CUDD::BDD state_bdd = state_to_bdd_with_encoding(var_mgr, automaton_id, state_encodings, state);
-        CUDD::BDD condition = state_metrics[state][j];
+      int succ = states_with_bit_i[j];
+      for (int k = 0; k < predecessors_vec[succ].size(); k++) {
+        int curr = predecessors_vec[succ][k];
+        CUDD::BDD state_bdd = state_to_bdd_with_encoding(var_mgr, automaton_id, state_encodings, curr);
+        CUDD::BDD condition = state_metrics[curr][succ];
         transition = transition + (state_bdd * condition);
+        // std::cout << "curr: " << curr << std::endl;
+        // std::cout << "curr_bdd: " << state_bdd << std::endl;
+        // std::cout << "succ: " << succ << std::endl;
+        // std::cout << "condition: " << condition << std::endl;
+        // var_mgr->dump_dot(condition.Add(), std::to_string(state)+"-"+std::to_string(states_with_bit_i[j])+".dot");
       }
     }
 
@@ -400,9 +408,9 @@ std::vector<int> SymbolicStateDfa::initial_state() const {
   return initial_state_;
 }
 
-CUDD::BDD SymbolicStateDfa::initial_state_bdd() const {
-  return state_to_bdd(var_mgr_, automaton_id_, 1);
-}
+// CUDD::BDD SymbolicStateDfa::initial_state_bdd() const {
+//   return state_to_bdd(var_mgr_, automaton_id_, 1);
+// }
 
 CUDD::BDD SymbolicStateDfa::final_states() const {
   return final_states_;

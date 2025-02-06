@@ -122,10 +122,10 @@ namespace Syft {
          */
         std::vector<int> initial_state() const;
 
-        /**
-         * \brief Returns the BDD representing the initial state of the DFA.
-         */
-        CUDD::BDD initial_state_bdd() const;
+        // /**
+        //  * \brief Returns the BDD representing the initial state of the DFA.
+        //  */
+        // CUDD::BDD initial_state_bdd() const;
 
         /**
          * \brief Returns the BDD encoding the set of final states.
