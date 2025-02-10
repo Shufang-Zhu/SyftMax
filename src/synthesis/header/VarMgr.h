@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "cuddObj.hh"
+#include "cudd.h"
 
 namespace Syft {
 
