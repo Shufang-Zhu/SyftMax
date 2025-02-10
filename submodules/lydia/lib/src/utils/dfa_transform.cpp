@@ -27,6 +27,7 @@ void interpretation_set_to_vect(const interpretation_set& src,
   }
 }
 
+/*
 void dfa_to_graphviz(const abstract_dfa& automaton,
                      const std::string& output_filename,
                      const std::string& format) {
@@ -96,6 +97,7 @@ void dfa_to_graphviz(const abstract_dfa& automaton,
   agclose(g);
   gvFreeContext(gvc);
 }
+*/
 
 void dumpdot(const CUDD::Cudd& mgr, const CUDD::BDD& b,
              const std::vector<const char*>& inames,

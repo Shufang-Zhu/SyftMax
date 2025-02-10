@@ -27,6 +27,10 @@ namespace Syft {
                                           (state_space_ & (!winning_states) & quantified_X_transitions_to_winning_states);
 
                 new_winning_states = project_into_states(new_winning_moves);
+
+                // std::cout << quantified_X_transitions_to_winning_states << std::endl;
+                // std::cout << new_winning_moves << std::endl;
+                // std::cout << new_winning_states << std::endl;
             } else {
                 CUDD::BDD transitions_to_winning_states = preimage(winning_states);
                 CUDD::BDD new_collected_winning_states = project_into_states(transitions_to_winning_states);

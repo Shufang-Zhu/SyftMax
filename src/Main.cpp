@@ -31,6 +31,9 @@ int main(int argc, char ** argv) {
     bool maxset = false;
     app.add_flag("-m,--maxset", maxset, "Maxset flag (Default: false)");
 
+    bool fanin_encoding = false;
+    app.add_flag("--fanin", fanin_encoding, "Fanin encoding flag (Default: false)");
+
 
     CLI11_PARSE(app, argc, argv);
     Syft::Stopwatch total_time_stopwatch; // stopwatch for end-to-end execution
@@ -55,15 +58,36 @@ int main(int argc, char ** argv) {
     Syft::ExplicitStateDfaMona explicit_dfa_mona = Syft::ExplicitStateDfaMona::dfa_of_formula(f);
     Syft::ExplicitStateDfa explicit_dfa =  Syft::ExplicitStateDfa::from_dfa_mona(var_mgr, explicit_dfa_mona);
 
-    Syft::SymbolicStateDfa symbolic_dfa = Syft::SymbolicStateDfa::from_explicit(
-            std::move(explicit_dfa));
+    // explicit_dfa_mona.dfa_print();
+
+    Syft::SymbolicStateDfa symbolic_dfa =
+    (fanin_encoding)
+        ? Syft::SymbolicStateDfa::from_explicit_fanin_encoding(std::move(explicit_dfa))
+        : Syft::SymbolicStateDfa::from_explicit(std::move(explicit_dfa));
 
     auto aut_time = aut_time_stopwatch.stop();
     std::cout << "DFA construction time: "
               << aut_time.count() << " ms" << std::endl;
 
+    std::cout << "Number of BDD nodes: "
+          << symbolic_dfa.bdd_nodes_num() << std::endl;
+    std::cout << "Number of BDD nodes in transitions: "
+          << symbolic_dfa.bdd_nodes_num_transitions() << std::endl;
+    std::cout << "Number of BDD nodes in final states: "
+          << symbolic_dfa.bdd_nodes_num_final_states() << std::endl;
+
+    // symbolic_dfa.dump_dot("dfa-o.dot");
+    // for (auto i = 0; i < symbolic_dfa.initial_state().size(); ++i) {
+    //     std::cout << symbolic_dfa.initial_state()[i] << " ";
+    // }
+    // std::cout << "Final states: " << symbolic_dfa.final_states() << std::endl;
+
+
     Syft::Stopwatch nondef_strategy_time_stopwatch; // stopwatch for strategy_generator construction
     nondef_strategy_time_stopwatch.start();
+
+    Syft::Stopwatch syn_time_stopwatch; // stopwatch for strategy_generator construction
+    syn_time_stopwatch.start();
 
     var_mgr->partition_variables(partition.input_variables,
                                  partition.output_variables);
@@ -116,7 +140,10 @@ int main(int argc, char ** argv) {
     else{
         std::cout << "The problem is Unrealizable" << std::endl;
     }
+    auto synthesis_time = syn_time_stopwatch.stop();
 
+    std::cout << "Synthesis time: "
+          << synthesis_time.count() << " ms" << std::endl;
   auto total_time = total_time_stopwatch.stop();
 
   std::cout << "Total time: "
