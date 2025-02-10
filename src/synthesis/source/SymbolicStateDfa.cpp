@@ -122,7 +122,7 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit(
 }
 
 
-SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const ExplicitStateDfa &explicit_dfa) {
+SymbolicStateDfa SymbolicStateDfa::from_explicit_fanin_encoding(const ExplicitStateDfa &explicit_dfa) {
   std::shared_ptr<VarMgr> var_mgr = explicit_dfa.var_mgr();
 
   int state_count = explicit_dfa.state_count();
@@ -164,7 +164,7 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_optimal_encoding(const Explicit
   // state_connections[0] = {1, 1, 0};
   // state_connections[1] = {1, 0, 1};
   // state_connections[2] = {1, 0, 1};
-  std::unordered_map<int, std::string> state_encodings = optimal_encoding(state_connections, bit_count);
+  std::unordered_map<int, std::string> state_encodings = fanin_encoding(state_connections, bit_count);
 
   // std::cout << "optimal encoding constructed\n";
   // for (auto it : state_encodings) {
@@ -248,10 +248,10 @@ std::vector<int> SymbolicStateDfa::binary_string_to_vector(const std::string& bi
   return result;
 }
 
-std::unordered_map<int, std::string> SymbolicStateDfa::optimal_encoding(std::vector<std::vector<int>>& state_connections, int bit_count) {
+std::unordered_map<int, std::string> SymbolicStateDfa::fanin_encoding(std::vector<std::vector<int>>& state_connections, int bit_count) {
 
   int state_count = state_connections.size();
-  std::vector<int> weights = weights_for_optimal_encoding(state_connections, bit_count);
+  std::vector<int> weights = weights_for_fanin_encoding(state_connections, bit_count);
 
   // Pair each state (index) with its weight
   std::vector<std::pair<int, int>> state_weights;
@@ -356,7 +356,7 @@ std::string SymbolicStateDfa::get_encoding_of_new_state(const std::unordered_set
 
 
 
-std::vector<int> SymbolicStateDfa::weights_for_optimal_encoding(std::vector<std::vector<int>> state_connections, int bit_count) {
+std::vector<int> SymbolicStateDfa::weights_for_fanin_encoding(std::vector<std::vector<int>> state_connections, int bit_count) {
   int state_count = state_connections.size();
   // testing
   // state_connections[0] = std::vector<int>({1, 1, 0});

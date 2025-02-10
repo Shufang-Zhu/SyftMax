@@ -31,8 +31,8 @@ int main(int argc, char ** argv) {
     bool maxset = false;
     app.add_flag("-m,--maxset", maxset, "Maxset flag (Default: false)");
 
-    bool optimal_encoding = false;
-    app.add_flag("-o,--optimal-encoding", optimal_encoding, "Optimal encoding flag (Default: false)");
+    bool fanin_encoding = false;
+    app.add_flag("--fanin", fanin_encoding, "Fanin encoding flag (Default: false)");
 
 
     CLI11_PARSE(app, argc, argv);
@@ -61,8 +61,8 @@ int main(int argc, char ** argv) {
     // explicit_dfa_mona.dfa_print();
 
     Syft::SymbolicStateDfa symbolic_dfa =
-    (optimal_encoding)
-        ? Syft::SymbolicStateDfa::from_explicit_optimal_encoding(std::move(explicit_dfa))
+    (fanin_encoding)
+        ? Syft::SymbolicStateDfa::from_explicit_fanin_encoding(std::move(explicit_dfa))
         : Syft::SymbolicStateDfa::from_explicit(std::move(explicit_dfa));
 
     auto aut_time = aut_time_stopwatch.stop();

@@ -56,13 +56,13 @@ namespace Syft {
          std::unordered_map<int, std::string> state_encodings,
          const std::vector<size_t> &states);
 
-       static std::vector<int> weights_for_optimal_encoding(std::vector<std::vector<int>> state_connections, int bit_count);
+       static std::vector<int> weights_for_fanin_encoding(std::vector<std::vector<int>> state_connections, int bit_count);
 
        static std::vector<std::string> get_encodings_of_successors(std::string base_encoding, int n, const std::unordered_set<std::string>& used_encodings);
 
        static std::string get_encoding_of_new_state(const std::unordered_set<std::string>& used_encodings, int bit_count);
 
-       static std::unordered_map<int, std::string> optimal_encoding(std::vector<std::vector<int>>& state_connections, int bit_count);
+       static std::unordered_map<int, std::string> fanin_encoding(std::vector<std::vector<int>>& state_connections, int bit_count);
 
        static int hammingDistance(const std::string& a, const std::string& b);
 
@@ -82,13 +82,13 @@ namespace Syft {
         static SymbolicStateDfa from_explicit(const ExplicitStateDfa &explicit_dfa);
 
         /**
-       * \brief Converts an explicit DFA to a symbolic representation using an optimal encoding.
+       * \brief Converts an explicit DFA to a symbolic representation using an fanin encoding.
        *
        *
        * \param explicit_dfa The explicit DFA to be converted.
        * \return The symbolic representation of the DFA.
        */
-        static SymbolicStateDfa from_explicit_optimal_encoding(const ExplicitStateDfa &explicit_dfa);
+        static SymbolicStateDfa from_explicit_fanin_encoding(const ExplicitStateDfa &explicit_dfa);
 
         /**
          * \brief Creates a simple automaton that remembers the value of predicates.
