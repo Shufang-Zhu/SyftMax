@@ -32,7 +32,10 @@ int main(int argc, char ** argv) {
     app.add_flag("-m,--maxset", maxset, "Maxset flag (Default: false)");
 
     bool fanin_encoding = false;
-    app.add_flag("--fanin", fanin_encoding, "Fanin encoding flag (Default: false)");
+    app.add_flag("--fanin", fanin_encoding, "fanin encoding flag (Default: false)");
+
+    bool fanout_encoding = false;
+    app.add_flag("--fanout", fanout_encoding, "fanout encoding flag (Default: false)");
 
 
     CLI11_PARSE(app, argc, argv);
@@ -61,9 +64,10 @@ int main(int argc, char ** argv) {
     // explicit_dfa_mona.dfa_print();
 
     Syft::SymbolicStateDfa symbolic_dfa =
-    (fanin_encoding)
-        ? Syft::SymbolicStateDfa::from_explicit_fanin_encoding(std::move(explicit_dfa))
-        : Syft::SymbolicStateDfa::from_explicit(std::move(explicit_dfa));
+    (fanout_encoding) ? Syft::SymbolicStateDfa::from_explicit_fanout_encoding(std::move(explicit_dfa))
+    : (fanin_encoding) ? Syft::SymbolicStateDfa::from_explicit_fanin_encoding(std::move(explicit_dfa))
+    : Syft::SymbolicStateDfa::from_explicit(std::move(explicit_dfa));
+
 
     auto aut_time = aut_time_stopwatch.stop();
     std::cout << "DFA construction time: "
