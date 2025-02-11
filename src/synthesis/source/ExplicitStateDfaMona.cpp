@@ -9,6 +9,7 @@
 #include <lydia/to_dfa/core.hpp>
 #include <lydia/to_dfa/strategies/compositional/base.hpp>
 #include <lydia/utils/print.hpp>
+#include <sstream>
 
 #include "String_utilities.h"
 

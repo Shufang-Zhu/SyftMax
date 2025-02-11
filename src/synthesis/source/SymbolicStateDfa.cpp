@@ -122,7 +122,7 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit(
 }
 
 
-SymbolicStateDfa SymbolicStateDfa::from_explicit_fanin_encoding(const ExplicitStateDfa &explicit_dfa) {
+SymbolicStateDfa SymbolicStateDfa::from_explicit_fanout_encoding(const ExplicitStateDfa &explicit_dfa) {
   std::shared_ptr<VarMgr> var_mgr = explicit_dfa.var_mgr();
 
   int state_count = explicit_dfa.state_count();
@@ -130,10 +130,6 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_fanin_encoding(const ExplicitSt
                state_count);
   std::size_t bit_count = count_and_id.first;
   std::size_t automaton_id = count_and_id.second;
-
-  // testing
-  // state_count = 3;
-  // bit_count = 2;
 
   std::vector<std::vector<CUDD::BDD>> state_metrics(state_count);
   std::vector<std::vector<int>> state_connections(state_count);
@@ -160,13 +156,9 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_fanin_encoding(const ExplicitSt
     state_connections[i] = state_connection;
   }
 
-  // std::cout << "state_connections done\n";
-  // state_connections[0] = {1, 1, 0};
-  // state_connections[1] = {1, 0, 1};
-  // state_connections[2] = {1, 0, 1};
-  std::unordered_map<int, std::string> state_encodings = fanin_encoding(state_connections, bit_count);
+  std::unordered_map<int, std::string> state_encodings = faninout_encoding(state_connections, bit_count);
 
-  // std::cout << "optimal encoding constructed\n";
+  // std::cout << "fanout encoding constructed\n";
   // for (auto it : state_encodings) {
   //   std::cout << it.first << " " << it.second << std::endl;
   // }
@@ -210,8 +202,101 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit_fanin_encoding(const ExplicitSt
   symbolic_dfa.transition_function_ = std::move(transition_function);
 
   return symbolic_dfa;
+}
 
+SymbolicStateDfa SymbolicStateDfa::from_explicit_fanin_encoding(const ExplicitStateDfa &explicit_dfa) {
+  //TODO
+  std::shared_ptr<VarMgr> var_mgr = explicit_dfa.var_mgr();
 
+  int state_count = explicit_dfa.state_count();
+  auto count_and_id = create_state_variables(var_mgr,
+               state_count);
+  std::size_t bit_count = count_and_id.first;
+  std::size_t automaton_id = count_and_id.second;
+
+  std::vector<std::vector<CUDD::BDD>> state_metrics(state_count);
+  std::vector<std::vector<int>> state_connections(state_count);
+  std::vector<std::vector<int>> predecessors_vec(state_count);
+  std::vector<std::vector<int>> state_connections_fanin(state_count, std::vector<int>(state_count));
+
+  std::vector<CUDD::ADD> transition_function_add = explicit_dfa.transition_function();
+
+  for (std::size_t i = 0; i < state_metrics.size(); ++i) {
+    std::vector<CUDD::BDD> state_metric(state_count);
+    std::vector<int> state_connection(state_count);
+    for (std::size_t j = 0; j < state_metrics.size(); ++j) {
+      CUDD::BDD transition = transition_function_add[i].BddInterval(j, j);
+      // CUDD::BDD transition = var_mgr->cudd_mgr()->bddZero();
+      // var_mgr->dump_dot(transition.Add(), std::to_string(i)+"_"+std::to_string(j)+".dot");
+      state_metric[j] = transition;
+      if (transition == var_mgr->cudd_mgr()->bddZero()) {
+        state_connection[j] = 0;
+        state_connections_fanin[j][i] = 0;
+      } else {
+        state_connection[j] = 1;
+        state_connections_fanin[j][i] = 1;
+        predecessors_vec[j].push_back(i);
+      }
+    }
+    state_metrics[i] = state_metric;
+    state_connections[i] = state_connection;
+  }
+
+  // std::vector<std::vector<int>> rotatedMatrix(state_count, std::vector<int>(state_count));
+  //
+  // for (int i = 0; i < state_count; ++i) {
+  //   for (int j = 0; j < state_count; ++j) {
+  //     rotatedMatrix[j][i] = state_connections[i][j];
+  //   }
+  // }
+  // assert(rotatedMatrix == state_connections_fanin);
+
+  std::unordered_map<int, std::string> state_encodings = faninout_encoding(state_connections_fanin, bit_count);
+
+  // std::cout << "fanin encoding constructed\n";
+  // for (auto it : state_encodings) {
+  //   std::cout << it.first << " " << it.second << std::endl;
+  // }
+
+  // build transition function
+  std::vector<CUDD::BDD> transition_function;
+  for (int i = 0; i < bit_count; ++i) {
+    std::vector<int> states_with_bit_i;
+    for (int j = 0; j < state_count; j++) {
+      if (state_encodings[j][i] == '1') {
+        states_with_bit_i.push_back(j);
+      }
+    }
+
+    CUDD::BDD transition = var_mgr->cudd_mgr()->bddZero();
+    for (int j = 0; j < states_with_bit_i.size(); j++) {
+      int succ = states_with_bit_i[j];
+      for (int k = 0; k < predecessors_vec[succ].size(); k++) {
+        int curr = predecessors_vec[succ][k];
+        CUDD::BDD state_bdd = state_to_bdd_with_encoding(var_mgr, automaton_id, state_encodings, curr);
+        CUDD::BDD condition = state_metrics[curr][succ];
+        transition = transition + (state_bdd * condition);
+        // std::cout << "curr: " << curr << std::endl;
+        // std::cout << "curr_bdd: " << state_bdd << std::endl;
+        // std::cout << "succ: " << succ << std::endl;
+        // std::cout << "condition: " << condition << std::endl;
+        // var_mgr->dump_dot(condition.Add(), std::to_string(state)+"-"+std::to_string(states_with_bit_i[j])+".dot");
+      }
+    }
+
+    transition_function.push_back(transition);
+  }
+  std::vector<int> initial_state = binary_string_to_vector(state_encodings[explicit_dfa.initial_state()]);
+  CUDD::BDD final_states = state_set_to_bdd_with_encoding(var_mgr, automaton_id, state_encodings,
+              explicit_dfa.final_states());
+
+  SymbolicStateDfa symbolic_dfa(var_mgr);
+  symbolic_dfa.automaton_id_ = automaton_id;
+  symbolic_dfa.initial_state_ = std::move(initial_state);
+  symbolic_dfa.final_states_ = std::move(final_states);
+  symbolic_dfa.transition_function_ = std::move(transition_function);
+
+  return symbolic_dfa;
 }
 
 CUDD::BDD SymbolicStateDfa::state_to_bdd_with_encoding(
@@ -248,10 +333,10 @@ std::vector<int> SymbolicStateDfa::binary_string_to_vector(const std::string& bi
   return result;
 }
 
-std::unordered_map<int, std::string> SymbolicStateDfa::fanin_encoding(std::vector<std::vector<int>>& state_connections, int bit_count) {
+std::unordered_map<int, std::string> SymbolicStateDfa::faninout_encoding(std::vector<std::vector<int>>& state_connections, int bit_count) {
 
   int state_count = state_connections.size();
-  std::vector<int> weights = weights_for_fanin_encoding(state_connections, bit_count);
+  std::vector<int> weights = weights_for_faninout_encoding(state_connections, bit_count);
 
   // Pair each state (index) with its weight
   std::vector<std::pair<int, int>> state_weights;
@@ -356,7 +441,7 @@ std::string SymbolicStateDfa::get_encoding_of_new_state(const std::unordered_set
 
 
 
-std::vector<int> SymbolicStateDfa::weights_for_fanin_encoding(std::vector<std::vector<int>> state_connections, int bit_count) {
+std::vector<int> SymbolicStateDfa::weights_for_faninout_encoding(std::vector<std::vector<int>> state_connections, int bit_count) {
   int state_count = state_connections.size();
   // testing
   // state_connections[0] = std::vector<int>({1, 1, 0});
