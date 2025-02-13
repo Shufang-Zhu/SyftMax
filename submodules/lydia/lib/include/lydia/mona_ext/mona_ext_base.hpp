@@ -24,6 +24,7 @@
 #include <tuple>
 #include <utility>
 #include <vector>
+#include <cstdint>
 
 extern "C" {
 #include <mona/bdd.h>
