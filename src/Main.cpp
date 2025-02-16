@@ -62,6 +62,7 @@ int main(int argc, char ** argv) {
     Syft::ExplicitStateDfa explicit_dfa =  Syft::ExplicitStateDfa::from_dfa_mona(var_mgr, explicit_dfa_mona);
 
     // explicit_dfa_mona.dfa_print();
+    // explicit_dfa.dump_dot("add_dfa.dot");
 
     Syft::SymbolicStateDfa symbolic_dfa =
     (fanout_encoding) ? Syft::SymbolicStateDfa::from_explicit_fanout_encoding(std::move(explicit_dfa))
@@ -72,7 +73,7 @@ int main(int argc, char ** argv) {
     auto aut_time = aut_time_stopwatch.stop();
     std::cout << "DFA construction time: "
               << aut_time.count() << " ms" << std::endl;
-
+    // symbolic_dfa.dump_dot("dfa.dot");
     std::cout << "Number of BDD nodes: "
           << symbolic_dfa.bdd_nodes_num() << std::endl;
     std::cout << "Number of BDD nodes in transitions: "
