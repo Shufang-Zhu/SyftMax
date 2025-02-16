@@ -112,6 +112,10 @@ SymbolicStateDfa SymbolicStateDfa::from_explicit(
   std::vector<CUDD::BDD> transition_function = symbolic_transition_function(
       var_mgr, automaton_id, explicit_dfa.transition_function());
 
+  if (transition_function.empty()) {
+    transition_function.push_back(var_mgr->cudd_mgr()->bddOne());
+  }
+
   SymbolicStateDfa symbolic_dfa(var_mgr);
   symbolic_dfa.automaton_id_ = automaton_id;
   symbolic_dfa.initial_state_ = std::move(initial_state);
