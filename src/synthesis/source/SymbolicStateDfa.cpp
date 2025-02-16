@@ -596,6 +596,9 @@ SymbolicStateDfa SymbolicStateDfa::product(const std::vector<SymbolicStateDfa>& 
 }
 
   std::size_t SymbolicStateDfa::bdd_nodes_num_transitions() const {
+    if (transition_function_.empty()) {
+      return 0;
+    }
     return var_mgr()->cudd_mgr()->nodeCount(transition_function_);
   }
 
