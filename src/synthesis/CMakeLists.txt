@@ -10,7 +10,9 @@ message(STATUS EXT_INCLUDE_PATH ${EXT_INCLUDE_PATH})
 file (GLOB_RECURSE HEADER_FILES ${SYNTHESIS_INCLUDE_PATH}/*.h)
 file (GLOB_RECURSE SOURCE_FILES ${SYNTHESIS_SRC_PATH}/*.cpp)
 
-add_library(${SYNTHESIS_LIB_NAME} STATIC ${HEADER_FILES} ${SOURCE_FILES})
+add_library(${SYNTHESIS_LIB_NAME} STATIC ${HEADER_FILES} ${SOURCE_FILES}
+        source/SymbolicStateDfaClassical.cpp
+        header/DfaGameSynthesizerClassical.h)
 
 target_link_libraries(${SYNTHESIS_LIB_NAME} ${PARSER_LIB_NAME} ${EXT_LIBRARIES_PATH})
 

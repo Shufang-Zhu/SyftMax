@@ -1,0 +1,3 @@
+#this is comment .inputs inc
+.inputs inc .inputs: init_counter_0 .outputs: carry_0 counter_0 .outputs carry_0
+#comment
